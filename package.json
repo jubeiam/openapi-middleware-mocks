@@ -1,21 +1,21 @@
 {
-  "name": "swagger-mock-api",
-  "version": "1.7.0",
-  "description": "Creates a connect middleware mock API from a Swagger 2.0 YAML file",
+  "name": "openapi-mocker",
+  "version": "1.0.0",
+  "description": "Creates a connect middleware mock API from a Opienapi#3",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dzdrazil/swagger-mock-api"
+    "url": "https://github.com/jubeiam/openapi-mocker"
   },
   "bugs": {
-    "url": "https://github.com/dzdrazil/swagger-mock-api/issues"
+    "url": "https://github.com/jubeiam/openapi-mocker/issues"
   },
   "scripts": {
     "build": "babel --optional runtime src --out-dir dist",
     "start": "cd demo && grunt",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "dzdrazil",
+  "author": "jubeiam",
   "license": "MIT",
   "dependencies": {
     "babel-runtime": "^5.5.6",
