@@ -1,8 +1,5 @@
 import url from "url";
-import fs from "fs";
-
 import parser from "@apidevtools/swagger-parser";
-
 import ConfigureRouter from "./ConfigureRouter";
 import PrunePaths from "./PrunePaths";
 import Routes from 'routes';
@@ -36,16 +33,6 @@ export default function (config: Config) {
     });
   });
 
-  if (config.watch) {
-    fs.watchFile(config.swaggerFile, function () {
-      parser.dereference(config.swaggerFile, function (err, api: OpenAPIV3.Document) {
-        if (err) throw err;
-
-        init(api);
-      });
-    });
-  }
-
   function init(api: OpenAPIV3.Document) {
     if (config.ignorePaths) {
       api.paths = PrunePaths(api.paths, config.ignorePaths);
@@ -53,7 +40,6 @@ export default function (config: Config) {
       api.paths = PrunePaths(api.paths, config.mockPaths, true);
     }
 
-    basePath = api.basePath || "";
     router = ConfigureRouter(api.paths);
   }
 

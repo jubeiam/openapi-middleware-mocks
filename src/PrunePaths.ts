@@ -1,6 +1,6 @@
 import { OpenAPIV3 } from 'openapi-types'
 
-type Methods = 'get' | 'post' | 'delete' | 'put'
+type Methods = 'get' | 'post' | 'delete' | 'put' | 'options' | 'head'
 
 export default function PrunePaths(paths: OpenAPIV3.PathsObject, passthroughPaths: string[], keep = false) {
   const replacement: any = {};
