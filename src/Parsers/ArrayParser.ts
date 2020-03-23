@@ -1,20 +1,21 @@
 import Chance from 'chance';
+import Parser from './Parser';
+import { OpenApi } from './OpenApi';
+
 const chance = new Chance();
 
 export default class ArrayParser {
-    constructor(parser) {
-        this.parser = parser;
-    }
+    constructor(private parser: Parser) { }
 
-    canParse(node) {
+    canParse(node: OpenApi.Schema) {
         return node.type === 'array';
     }
 
-    parse(node) {
+    parse(node: OpenApi.SchemaArray) {
         return this.generateArray(node);
     }
 
-    generateArray(node) {
+    generateArray(node: OpenApi.SchemaArray) {
         let items = node.items;
         let options = node['x-type-options'] || {};
 

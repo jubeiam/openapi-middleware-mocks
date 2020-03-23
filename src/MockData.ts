@@ -3,7 +3,7 @@
 import Parser from "./Parsers/Parser";
 const parser = new Parser();
 
-export default function MockData(definition, responseCode) {
+export default function MockData(definition: any, responseCode: number) {
   const def = definition.schema
     ? definition
     : (definition.content || {})["application/json"];

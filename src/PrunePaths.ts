@@ -1,14 +1,17 @@
-/* eslint no-loop-func:0*/
-export default function PrunePaths(paths, passthroughPaths, keep) {
-  let replacement = {};
+import { OpenAPIV3 } from 'openapi-types'
+
+type Methods = 'get' | 'post' | 'delete' | 'put'
+
+export default function PrunePaths(paths: OpenAPIV3.PathsObject, passthroughPaths: string[], keep = false) {
+  const replacement: any = {};
 
   for (let i = 0; i < passthroughPaths.length; i++) {
     const p = passthroughPaths[i];
-    let [path, ...methods] = p.split(' ').reverse();
+    const [path, ...methods] = p.split(" ").reverse();
 
     if (methods.length) {
-      methods = methods.map(x => x.toLowerCase());
-      methods.forEach(m => {
+      const methodsNormalized = <Methods[]>methods.map(x => x.toLowerCase());
+      methodsNormalized.forEach((m) => {
         if (keep && replacement[path]) {
           replacement[path][m] = paths[path][m];
         } else if (keep) {
