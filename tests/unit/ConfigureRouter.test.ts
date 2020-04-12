@@ -1,4 +1,4 @@
-import { isMethod, correctPath, addRoutes, generateResponse } from '../../src/ConfigureRouter'
+import { isMethod, correctPath, addRoutes } from '../../src/ConfigureRouter'
 import parser from "@apidevtools/swagger-parser";
 import { OpenAPIV3 } from 'openapi-types';
 import Routes from "routes";
@@ -49,32 +49,4 @@ test('addRoutes', () => {
 
     addRoutes(pathItemObject, router, route)
     expect(mockAddRoute.mock.calls[0][0]).toEqual('GET /pets');
-})
-
-test('generateResponse - 200', () => {
-    const fn = jest.fn((schema: any, code: number) => { })
-
-    generateResponse(apiConfig.paths['/pets'].get.responses, fn)
-
-    expect(fn.mock.calls[0][1]).toEqual(200);
-    expect(fn.mock.calls[0][0].description).toEqual(apiConfig.paths['/pets'].get.responses[200].description)
-})
-
-test('generateResponse - default', () => {
-    const fn = jest.fn((schema: any, code: number) => { })
-
-    generateResponse(apiConfig.paths['/pets'].head.responses, fn)
-
-    expect(fn.mock.calls[0][1]).toEqual(400);
-    expect(fn.mock.calls[0][0].description).toEqual(apiConfig.paths['/pets'].get.responses.default.description)
-})
-
-
-test('generateResponse - 300 to default', () => {
-    const fn = jest.fn((schema: any, code: number) => { })
-
-    generateResponse(apiConfig.paths['/pets'].options.responses, fn)
-
-    expect(fn.mock.calls[0][1]).toEqual(400);
-    expect(fn.mock.calls[0][0].description).toEqual(apiConfig.paths['/pets'].get.responses.default.description)
 })
