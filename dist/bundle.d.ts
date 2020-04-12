@@ -1,8 +1,12 @@
+import { OpenAPIV3 } from 'openapi-types';
 interface Config {
-    swaggerFile: string;
-    ignorePaths: string[];
-    mockPaths: string[];
-    watch: boolean;
+    openApiFile?: string;
+    openApi?: OpenAPIV3.Document;
+    ignorePaths?: string[];
+    mockPaths?: string[];
+    watch?: boolean;
+    format400?: () => {};
+    format404?: (next: Function) => {};
 }
-declare function indexFunc(config: Config): (req: any, res: any, next: any) => void;
+declare function indexFunc(config: Config): Promise<(req: any, res: any, next: any) => any>;
 export { Config, indexFunc as default };

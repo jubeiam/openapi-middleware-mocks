@@ -1,4 +1,4 @@
-import Parser from "./Parsers/Parser";
+import Parser, { ParserSchemaObject } from "./Parsers/Parser";
 import { OpenAPIV3 } from "openapi-types";
 
 const castToJsonSchema = require('@openapi-contrib/openapi-schema-to-json-schema');
@@ -6,7 +6,7 @@ const djv = require('djv');
 const parser = new Parser();
 
 
-export function validateDataAgainstSchema(data: any, schema: OpenAPIV3.BaseSchemaObject): true | string {
+export function validateDataAgainstSchema(data: any, schema: ParserSchemaObject): true | string {
     const env = djv({
         version: 'draft-04'
     })
@@ -39,7 +39,7 @@ function validateRequestBody(operation: OpenAPIV3.OperationObject, data: any) {
     let responseSchema, responseCode, responseBody
 
     if (operation.requestBody && 'content' in operation.requestBody) {
-        const requestBodySchema = <OpenAPIV3.BaseSchemaObject>getRequestBodySchema(operation.requestBody)
+        const requestBodySchema = <ParserSchemaObject>getRequestBodySchema(operation.requestBody)
         let validRequestBody: true | string = 'schema missing'
         if (requestBodySchema) {
             validRequestBody = validateDataAgainstSchema(data, requestBodySchema)
@@ -47,7 +47,7 @@ function validateRequestBody(operation: OpenAPIV3.OperationObject, data: any) {
 
         if (true !== validRequestBody) {
             responseCode = '400'
-            responseBody = responseSchema = <OpenAPIV3.BaseSchemaObject>getResponseSchema(responseCode, operation.responses)
+            responseBody = responseSchema = <ParserSchemaObject>getResponseSchema(responseCode, operation.responses)
 
             if (responseSchema) {
                 responseBody = parser.parse(responseSchema)
