@@ -22,6 +22,15 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v1.4.1
+      with:
+        node-version: 10.x
+   
+   # Runs a single command using the runners shell
+    - name: Instal dep
+      run: yarn
+       
     # Runs a single command using the runners shell
     - name: Run tests
       run: yarn test
