@@ -2,6 +2,7 @@ import parser from "@apidevtools/swagger-parser";
 import { OpenAPIV3 } from 'openapi-types'
 import ConfigureRouter, { correctPath } from '../../src/ConfigureRouter';
 import { RouteData } from '../../src/PrepareResponse'
+import main from '../../src/index'
 
 interface LocalRequest {
     method: 'GET' | 'POST' | 'PUT'
@@ -14,57 +15,61 @@ interface LocalResponse {
     body: any
 }
 
-export async function invoke(api: string | OpenAPIV3.Document, request: LocalRequest): Promise<LocalResponse> {
-    const apiDef = await parser.dereference(api)
-    const router = ConfigureRouter(apiDef.paths);
 
+let cachedMain = null;
+let caheKey = ''
 
-    // TODO: extract to src
-    function format500Message(message: 'internal server error'): Object {
-        return { code: 500, message }
+async function getMiddleware(api: string) {
+    if (caheKey === api) {
+        return cachedMain
     }
 
-    function format404Message(): Object {
-        return { code: 404, message: 'not found' }
-    }
+    caheKey = api;
+    return cachedMain = await main({
+        openApiFile: api,
+        format400() {
+            return {
+                code: 400,
+                message: 'bad request',
+            }
+        },
+        format404() {
+            return {
+                code: 404,
+                message: 'not found'
+            }
+        }
+    })
+}
 
-    function format400Message(): Object {
-        return { code: 400, message: 'bad request' }
-    }
+export async function invoke(api: string, request: LocalRequest): Promise<LocalResponse> {
 
-    const matchingRoute = router.match(request.method.toUpperCase() + ' ' + request.url);
+    const execRoute = await getMiddleware(api)
 
-    let response, statusCode
-
-    if (!matchingRoute) {
-        return <LocalResponse>{
-            statusCode: 404,
-            body: format404Message()
+    const res = {
+        statusCode: 0,
+        response: null,
+        write(x) {
+            this.response = x
+            if (x) {
+                this.response = JSON.parse(x);
+            }
+        },
+        end() { },
+        setHeader() { },
+        status(code: number) {
+            this.statusCode = code
         }
     }
 
-    const matchingRouteData = <RouteData>{
-        body: request.body,
-        params: matchingRoute.params,
-        method: request.method,
-        baseUrl: request.url,
-        url: request.url,
+    const next = () => {
+        console.log('NOT FOUND', request.url);
     }
 
-    try {
-        [response, statusCode] = matchingRoute.fn(matchingRouteData, matchingRoute.next);
-    } catch (e) {
-        statusCode = 500
-        response = format500Message(e.message)
-        console.error(e)
-    }
-
-    if (400 === statusCode) {
-        response = format400Message()
-    }
+    await execRoute(request, res, next)
 
     return <LocalResponse>{
-        statusCode: statusCode,
-        body: response,
+        statusCode: res.statusCode,
+        body: res.response,
     }
 }

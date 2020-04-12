@@ -1,5 +1,6 @@
 import path from 'path'
 import { invoke } from './invoke.util'
+import { OpenAPIV3 } from 'openapi-types'
 const api = path.join(__dirname, '../', 'petstore.yaml')
 
 
@@ -8,7 +9,6 @@ test('Get pets list', async () => {
         url: '/pets',
         method: 'GET'
     })
-
     expect(response.statusCode).toBe(200)
     expect(Array.isArray(response.body)).toBeTruthy()
 })

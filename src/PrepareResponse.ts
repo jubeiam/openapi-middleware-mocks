@@ -24,9 +24,6 @@ export function validateDataAgainstSchema(data: any, schema: OpenAPIV3.BaseSchem
 export interface RouteData {
     body: any
     params: string[]
-    method: string
-    baseUrl: string
-    url: string
 }
 
 function getRequestBodySchema(requestBody: OpenAPIV3.RequestBodyObject) {
@@ -65,13 +62,15 @@ function validateRequestBody(operation: OpenAPIV3.OperationObject, data: any) {
 
 export default function PrepareResponse(operation: OpenAPIV3.OperationObject) {
 
-    return (routeData: RouteData, next: Function) => {
+    return (routeData: RouteData) => {
         const responses = operation.responses
         let responseCode = '500', responseBody = null
 
-        const resultRequest = validateRequestBody(operation, routeData.body)
-        if (resultRequest) {
-            return [resultRequest[0], parseInt(resultRequest[1])]
+        if (routeData.body) {
+            const resultRequest = validateRequestBody(operation, routeData.body)
+            if (resultRequest) {
+                return [resultRequest[0], parseInt(resultRequest[1])]
+            }
         }
 
         for (responseCode in responses) {

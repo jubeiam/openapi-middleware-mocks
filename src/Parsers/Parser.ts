@@ -16,7 +16,7 @@ export type ParserSchemaObject = ParserArraySchemaObject | ParserNonArraySchemaO
 
 export interface ParserArraySchemaObject extends ParserBaseSchemaObject {
     type: OpenAPIV3.ArraySchemaObjectType;
-    items: ParserSchemaObject[];
+    items: ParserSchemaObject;
 }
 export interface ParserNonArraySchemaObject extends ParserBaseSchemaObject {
     type: OpenAPIV3.NonArraySchemaObjectType;

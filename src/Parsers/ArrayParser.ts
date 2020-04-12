@@ -25,7 +25,7 @@ export default class ArrayParser {
         let ret = [];
 
         for (let i = 0; i < iterations; i++) {
-            ret.push(this.parser.parse(items[i]));
+            ret.push(this.parser.parse(items));
         }
 
         return ret;
