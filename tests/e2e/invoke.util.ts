@@ -1,7 +1,3 @@
-import parser from "@apidevtools/swagger-parser";
-import { OpenAPIV3 } from 'openapi-types'
-import ConfigureRouter, { correctPath } from '../../src/ConfigureRouter';
-import { RouteData } from '../../src/PrepareResponse'
 import main from '../../src/index'
 
 interface LocalRequest {

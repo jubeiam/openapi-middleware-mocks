@@ -1,6 +1,5 @@
 import path from 'path'
 import { invoke } from './invoke.util'
-import { OpenAPIV3 } from 'openapi-types'
 const api = path.join(__dirname, '../', 'petstore.yaml')
 
 
