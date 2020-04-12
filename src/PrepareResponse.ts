@@ -1,8 +1,7 @@
-import MockData from './MockData';
 import Parser from "./Parsers/Parser";
-import castToJsonSchema from '@openapi-contrib/openapi-schema-to-json-schema';
 import { OpenAPIV3 } from "openapi-types";
 
+const castToJsonSchema = require('@openapi-contrib/openapi-schema-to-json-schema');
 const djv = require('djv');
 const parser = new Parser();
 

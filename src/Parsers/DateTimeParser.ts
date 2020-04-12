@@ -1,13 +1,13 @@
 import Chance from 'chance';
-import { OpenApi } from './OpenApi';
+import { ParserSchemaObject } from './Parser';
 const chance = new Chance();
 
 export default class DateParser {
-    canParse(node: OpenApi.Schema) {
+    canParse(node: ParserSchemaObject) {
         return node.type === 'string' && 'format' in node && node.format === 'date-time';
     }
 
-    parse(node: OpenApi.SchemaString) {
+    parse(node: ParserSchemaObject) {
         const d = new Date(chance.timestamp())
 
         return d.getFullYear()

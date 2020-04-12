@@ -1,26 +1,29 @@
 //@ts-ignore
 import hoek from 'hoek';
-import Parser, { ParserFunc } from './Parser';
-import { OpenApi } from './OpenApi'
+import Parser, { ParserFunc, ParserSchemaObject, ParserNonArraySchemaObject, ParserArraySchemaObject } from './Parser';
 
 export default class ObjectParser implements ParserFunc {
     constructor(private parser: Parser) {
     }
-    canParse(node: OpenApi.Schema) {
+    canParse(node: ParserSchemaObject) {
         return node.type === 'object';
     }
 
-    parse(node: OpenApi.SchemaObject) {
+    parse(node: ParserSchemaObject) {
         return this.generateObject(node);
     }
 
-    generateObject(node: OpenApi.SchemaObject) {
+    generateObject(node: ParserSchemaObject): Object {
         const ret: any = {};
-        const schema = <OpenApi.SchemaObject>hoek.clone(node);
+        const schema = <ParserNonArraySchemaObject>hoek.clone(node);
         const properties = schema.properties;
 
         for (let k in properties) {
-            ret[k] = this.parser.parse(properties[k]);
+            if ('$ref' === k) {
+                continue;
+            }
+
+            ret[k] = this.parser.parse(<ParserArraySchemaObject | ParserNonArraySchemaObject>properties[k]);
         }
 
         return ret;

@@ -1,14 +1,14 @@
 import Chance from 'chance';
+import { ParserSchemaObject } from './Parser';
 const chance = new Chance();
-import { OpenApi } from './OpenApi'
 
 
 export default class EnumParser {
-    canParse(node: OpenApi.Schema) {
+    canParse(node: ParserSchemaObject) {
         return node.type === 'string' && 'enum' in node;
     }
 
-    parse(node: OpenApi.SchemaEnum) {
+    parse(node: ParserSchemaObject) {
         return this.parseEnum(node.enum);
     }
 

@@ -1,13 +1,13 @@
 import Chance from 'chance';
+import { ParserSchemaObject } from './Parser';
 const chance = new Chance();
-import { OpenApi } from './OpenApi'
 
 export default class NumberParser {
-    canParse(node: OpenApi.Schema) {
+    canParse(node: ParserSchemaObject) {
         return this.isInteger(node) || this.isFloating(node);
     }
 
-    parse(node: OpenApi.SchemaNumber) {
+    parse(node: ParserSchemaObject) {
         if (this.isInteger(node))
             return this.generateInteger(node);
 
@@ -15,12 +15,12 @@ export default class NumberParser {
             return chance.floating(node['x-type-options']);
     }
 
-    generateInteger(node: OpenApi.SchemaNumber) {
+    generateInteger(node: ParserSchemaObject) {
         let bounds = this.resolveBounds(node);
         return chance.integer(bounds) * (node.multipleOf || 1);
     }
 
-    resolveBounds(node: OpenApi.SchemaNumber) {
+    resolveBounds(node: ParserSchemaObject) {
         let bounds = { min: Number.MIN_SAFE_INTEGER, max: Number.MAX_SAFE_INTEGER };
 
         Object.assign(bounds, node['x-type-options']);
@@ -46,11 +46,11 @@ export default class NumberParser {
         return bounds;
     }
 
-    isInteger(node: OpenApi.Schema) {
+    isInteger(node: ParserSchemaObject) {
         return node.type === 'integer';
     }
 
-    isFloating(node: OpenApi.Schema) {
+    isFloating(node: ParserSchemaObject) {
         return node.type === 'number' && 'format' in node && (node.format === 'float' || node.format === 'double');
     }
 }

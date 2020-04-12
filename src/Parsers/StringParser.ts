@@ -2,18 +2,19 @@ import Chance from 'chance';
 const chance = new Chance();
 //@ts-ignore
 import RandExp from 'randexp';
-import { OpenApi } from './OpenApi'
+import { ParserSchemaObject } from './Parser';
+
 
 export default class StringParser {
-    canParse(node: OpenApi.Schema) {
+    canParse(node: ParserSchemaObject) {
         return node.type === 'string';
     }
 
-    parse(node: OpenApi.SchemaString) {
+    parse(node: ParserSchemaObject) {
         return this.parseString(node);
     }
 
-    parseString(node: OpenApi.SchemaString) {
+    parseString(node: ParserSchemaObject) {
         if (node.pattern)
             return new RandExp(node.pattern).gen();
 
@@ -21,7 +22,7 @@ export default class StringParser {
         return chance.string(options);
     }
 
-    resolveChanceOptions(node: OpenApi.SchemaString) {
+    resolveChanceOptions(node: ParserSchemaObject) {
         let options = node['x-type-options'] || {};
 
         if (node.maxLength && node.minLength)

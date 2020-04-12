@@ -7,14 +7,31 @@ import BooleanParser from "./BooleanParser";
 import AllOfParser from "./AllOfParser";
 import EnumParser from "./EnumParser";
 import Chance from "chance";
-import { OpenApi } from './OpenApi'
+import { OpenAPIV3 } from "openapi-types";
 
 const chance = new Chance();
 const parsers: ParserFunc[] = [];
 
+export type ParserSchemaObject = ParserArraySchemaObject | ParserNonArraySchemaObject;
+
+export interface ParserArraySchemaObject extends ParserBaseSchemaObject {
+    type: OpenAPIV3.ArraySchemaObjectType;
+    items: ParserSchemaObject[];
+}
+export interface ParserNonArraySchemaObject extends ParserBaseSchemaObject {
+    type: OpenAPIV3.NonArraySchemaObjectType;
+}
+
+type ParserBaseSchemaObject = Omit<OpenAPIV3.BaseSchemaObject, 'allOf'> & {
+    allOf: ParserSchemaObject[]
+    'x-type-options'?: any
+    'x-chance-type'?: Extract<keyof Chance.Chance, Function>
+    'x-type-value'?: any
+}
+
 export interface ParserFunc {
-    canParse(node: OpenApi.Schema): boolean
-    parse(node: OpenApi.Schema): any
+    canParse(node: ParserSchemaObject): boolean
+    parse(node: ParserSchemaObject): any
 }
 
 export default class Parser {
@@ -36,7 +53,7 @@ export default class Parser {
         return parsers;
     }
 
-    getParser(node: OpenApi.Schema): ParserFunc {
+    getParser(node: ParserSchemaObject): ParserFunc {
         let parser = this.parsers.find(p => p.canParse(node));
 
         if (!parser) {
@@ -46,7 +63,7 @@ export default class Parser {
         return parser;
     }
 
-    parse(node: OpenApi.Schema): any {
+    parse(node: ParserSchemaObject): any {
         if ('x-type-value' in node) {
             return node["x-type-value"];
         }

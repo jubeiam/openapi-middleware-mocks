@@ -1,18 +1,17 @@
-import Parser from './Parser';
-import { OpenApi } from './OpenApi';
+import Parser, { ParserSchemaObject } from './Parser';
 
 export default class AllOfParser {
   constructor(private parser: Parser) { }
 
-  public canParse(node: OpenApi.SchemaXOf) {
+  public canParse(node: ParserSchemaObject) {
     return 'allOf' in node;
   }
 
-  public parse(node: OpenApi.SchemaAllOf) {
+  public parse(node: ParserSchemaObject) {
     return this.generateObject(node);
   }
 
-  public generateObject(node: OpenApi.SchemaAllOf) {
+  public generateObject(node: ParserSchemaObject) {
     return node.allOf.reduce(
       (s, o) => Object.assign(s, this.parser.parse(o)),
       {}
