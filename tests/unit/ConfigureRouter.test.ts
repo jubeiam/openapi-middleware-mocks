@@ -1,9 +1,7 @@
-import { isMethod, correctPath, addRoutes, generateResponse } from '../src/ConfigureRouter'
+import { isMethod, correctPath, addRoutes, generateResponse } from '../../src/ConfigureRouter'
 import parser from "@apidevtools/swagger-parser";
 import { OpenAPIV3 } from 'openapi-types';
 import Routes from "routes";
-import MockData from "../src/MockData";
-
 
 const mockAddRoute = jest.fn();
 jest.mock('routes', () => {
@@ -11,7 +9,6 @@ jest.mock('routes', () => {
         return { addRoute: mockAddRoute };
     });
 });
-
 
 let router
 let apiConfig
@@ -45,7 +42,6 @@ test('correctPath', () => {
     expect(correctPath('foo/{bar}/')).toBe('/foo/:bar')
     expect(correctPath('foo/{bar}')).toBe('/foo/:bar')
 });
-
 
 test('addRoutes', () => {
     const route = '/pets'

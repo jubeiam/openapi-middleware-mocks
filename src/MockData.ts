@@ -1,15 +1,14 @@
-"use strict";
-
 import Parser from "./Parsers/Parser";
+import { OpenAPIV3 } from "openapi-types";
+
 const parser = new Parser();
 
-export default function MockData(definition: any, responseCode: number) {
-  const def = definition.schema
-    ? definition
-    : (definition.content || {})["application/json"];
+export default function MockData(definition: OpenAPIV3.ResponseObject, responseCode: number) {
+
+  const def = (definition.content || {})["application/json"];
 
   if (!def) {
-    return null;
+    return [null, responseCode];
   }
 
   if (!def.schema) {
@@ -17,8 +16,8 @@ export default function MockData(definition: any, responseCode: number) {
       console.warn("Schema not found");
     }
 
-    return null;
+    return [null, 500];
   }
 
-  return parser.parse(def.schema);
+  return [parser.parse(def.schema), responseCode]
 }
