@@ -16,7 +16,8 @@
   },
   "author": "jubeiam",
   "license": "MIT",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@apidevtools/swagger-parser": "^9.0.1",
     "@openapi-contrib/openapi-schema-to-json-schema": "^3.0.0",
     "@rollup/plugin-commonjs": "^11.0.2",
@@ -32,9 +33,7 @@
     "randexp": "^0.4.2",
     "rollup": "^2.1.0",
     "routes": "~2.0.0",
-    "typescript": "^3.8.3"
-  },
-  "devDependencies": {
+    "typescript": "^3.8.3",
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
     "@babel/preset-typescript": "^7.9.0",
