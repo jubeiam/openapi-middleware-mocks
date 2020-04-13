@@ -4,7 +4,6 @@ interface Config {
     openApi?: OpenAPIV3.Document;
     ignorePaths?: string[];
     mockPaths?: string[];
-    watch?: boolean;
     format400?: () => {};
     format404?: (next: Function) => {};
 }
