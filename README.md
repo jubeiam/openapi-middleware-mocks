@@ -59,7 +59,7 @@ components:
         x-chance-type: guid
 ```
 
-Most of the chance methods allow some fine-tuning of the returned data. For example, the [integer](http://chancejs.com/#integer) method allows specification of minimum and maximum output values. These options can be configured in the Swagger YAML file with the `x-chance-options` block:
+Most of the chance methods allow some fine-tuning of the returned data. For example, the [integer](https://chancejs.com/basics/integer.html) method allows specification of minimum and maximum output values. These options can be configured in the Swagger YAML file with the `x-chance-options` block:
 
 ```yaml
 components:
