@@ -12,9 +12,9 @@ This module is a middleware generating function that generates an API based on a
 
 ## Install
 
-`yarn add openapi-mocker`
+`yarn add openapi-middleware-mocks`
 or
-`npm install openapi-mocker`
+`npm install openapi-middleware-mocks`
 
 ## Usage
 
