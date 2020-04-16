@@ -10,6 +10,10 @@
   "bugs": {
     "url": "https://github.com/jubeiam/openapi-mocker/issues"
   },
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "build": "yarn run rollup -c --file ./dist/bundle.js --format cjs",
     "test": "yarn jest",
