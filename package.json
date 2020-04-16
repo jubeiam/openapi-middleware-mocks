@@ -2,7 +2,7 @@
   "name": "openapi-mocker",
   "version": "1.0.3",
   "description": "Creates a connect middleware mock API from a Opienapi#3",
-  "main": "dist/index.js",
+  "main": "dist/bundle.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/jubeiam/openapi-mocker"
