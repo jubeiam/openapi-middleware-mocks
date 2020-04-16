@@ -1,14 +1,14 @@
 {
-  "name": "openapi-mocker",
+  "name": "openapi-middleware-mocks",
   "version": "1.0.4",
   "description": "Creates a connect middleware mock API from a Opienapi#3",
   "main": "dist/bundle.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jubeiam/openapi-mocker"
+    "url": "https://github.com/jubeiam/openapi-middleware-mocks"
   },
   "bugs": {
-    "url": "https://github.com/jubeiam/openapi-mocker/issues"
+    "url": "https://github.com/jubeiam/openapi-middleware-mocks/issues"
   },
   "files": [
     "dist",
