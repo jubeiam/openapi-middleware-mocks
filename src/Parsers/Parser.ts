@@ -23,7 +23,7 @@ export interface ParserNonArraySchemaObject extends ParserBaseSchemaObject {
 }
 
 type ParserBaseSchemaObject = Omit<OpenAPIV3.BaseSchemaObject, 'allOf'> & {
-    allOf: ParserSchemaObject[]
+    allOf?: ParserSchemaObject[]
     'x-type-options'?: any
     'x-chance-type'?: Extract<keyof Chance.Chance, Function>
     'x-type-value'?: any

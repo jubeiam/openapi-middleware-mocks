@@ -43,7 +43,6 @@ export default async function (config: Config) {
     const path = url.parse(req.url).pathname;
     const route = method.toUpperCase() + ' ' + path;
     const matchingRoute = router.match(route);
-    let body
 
     res.setHeader("Content-Type", "application/json");
 

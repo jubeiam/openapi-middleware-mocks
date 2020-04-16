@@ -1,8 +1,8 @@
 import { validateDataAgainstSchema } from '../../src/PrepareResponse'
-import { OpenAPIV3 } from "openapi-types";
+import { ParserSchemaObject } from '../../src/Parsers/Parser';
 
 
-const schema = <OpenAPIV3.BaseSchemaObject>{
+const schema = <ParserSchemaObject>{
     type: 'object',
     required: ['name'],
     properties: {

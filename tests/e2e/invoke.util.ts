@@ -1,4 +1,4 @@
-import main from '../../src/index'
+import main, { Config } from '../../src/index'
 
 interface LocalRequest {
     method: 'GET' | 'POST' | 'PUT'
@@ -15,14 +15,13 @@ interface LocalResponse {
 let cachedMain = null;
 let caheKey = ''
 
-async function getMiddleware(api: string) {
-    if (caheKey === api) {
+async function getMiddleware(mainConfig: Config) {
+    if (caheKey === JSON.stringify(mainConfig)) {
         return cachedMain
     }
 
-    caheKey = api;
+    caheKey = JSON.stringify(mainConfig);
     return cachedMain = await main({
-        openApiFile: api,
         format400() {
             return {
                 code: 400,
@@ -34,13 +33,14 @@ async function getMiddleware(api: string) {
                 code: 404,
                 message: 'not found'
             }
-        }
+        },
+        ...mainConfig
     })
 }
 
-export async function invoke(api: string, request: LocalRequest): Promise<LocalResponse> {
+export async function invoke(request: LocalRequest, mainConfig: Config = {}): Promise<LocalResponse> {
 
-    const execRoute = await getMiddleware(api)
+    const execRoute = await getMiddleware(mainConfig)
 
     const res = {
         statusCode: 0,
