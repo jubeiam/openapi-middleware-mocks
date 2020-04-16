@@ -1,6 +1,6 @@
 {
   "name": "openapi-mocker",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Creates a connect middleware mock API from a Opienapi#3",
   "main": "dist/index.js",
   "repository": {

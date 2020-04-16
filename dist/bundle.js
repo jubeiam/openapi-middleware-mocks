@@ -2445,34 +2445,37 @@ function ConfigureRouter(paths) {
     return router;
 }
 
+function pruneMethods(selectedPaths, paths, path, keep = false, method = '') {
+    if (keep && selectedPaths[path]) {
+        selectedPaths[path][method] = paths[path][method];
+    }
+    else if (keep) {
+        selectedPaths[path] = {
+            [method]: paths[path][method]
+        };
+    }
+    else if (undefined !== paths[path]) {
+        delete paths[path][method];
+    }
+}
 function PrunePaths(paths, passthroughPaths, keep = false) {
-    const replacement = {};
+    const selectedPaths = {};
     for (let i = 0; i < passthroughPaths.length; i++) {
         const p = passthroughPaths[i];
         const [path, ...methods] = p.split(" ").reverse();
         if (methods.length) {
-            const methodsNormalized = methods.map(x => x.toLowerCase());
-            methodsNormalized.forEach((m) => {
-                if (keep && replacement[path]) {
-                    replacement[path][m] = paths[path][m];
-                }
-                else if (keep) {
-                    replacement[path] = replacement[path] || {};
-                    replacement[path][m] = paths[path][m];
-                }
-                else {
-                    delete paths[path][m];
-                }
-            });
+            methods
+                .map(x => x.toLowerCase())
+                .forEach(pruneMethods.bind(null, selectedPaths, paths, path, keep));
         }
         else if (keep) {
-            replacement[path] = paths[path];
+            selectedPaths[path] = paths[path];
         }
         else {
             delete paths[path];
         }
     }
-    return keep ? replacement : paths;
+    return keep ? selectedPaths : paths;
 }
 
 function index (config) {
