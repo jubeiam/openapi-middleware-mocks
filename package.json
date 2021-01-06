@@ -1,7 +1,13 @@
 {
   "name": "openapi-middleware-mocks",
-  "keywords": ["openapi", "middleware", "openapi3", "openapiv3", "express"],
-  "version": "1.0.8",
+  "keywords": [
+    "openapi",
+    "middleware",
+    "openapi3",
+    "openapiv3",
+    "express"
+  ],
+  "version": "1.0.9",
   "description": "Creates a connect middleware mock API from a Opienapi#3",
   "main": "dist/bundle.js",
   "repository": {
