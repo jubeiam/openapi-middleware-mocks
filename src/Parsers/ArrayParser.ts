@@ -7,7 +7,7 @@ export default class ArrayParser {
     constructor(private parser: Parser) { }
 
     canParse(node: ParserSchemaObject) {
-        return node.type === 'array';
+        return 'type' in node && node.type === 'array';
     }
 
     parse(node: ParserSchemaObject) {

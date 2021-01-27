@@ -4,7 +4,7 @@ const chance = new Chance();
 
 export default class DateParser {
     canParse(node: ParserSchemaObject) {
-        return node.type === 'string' && 'format' in node && node.format === 'date';
+        return 'type' in node && node.type === 'string' && 'format' in node && node.format === 'date';
     }
 
     parse(node: ParserSchemaObject) {

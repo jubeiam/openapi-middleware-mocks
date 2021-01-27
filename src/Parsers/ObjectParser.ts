@@ -6,14 +6,14 @@ export default class ObjectParser implements ParserFunc {
     constructor(private parser: Parser) {
     }
     canParse(node: ParserSchemaObject) {
-        return node.type === 'object';
+        return 'type' in node && node.type === 'object';
     }
 
-    parse(node: ParserSchemaObject) {
+    parse(node: ParserNonArraySchemaObject) {
         return this.generateObject(node);
     }
 
-    generateObject(node: ParserSchemaObject): Object {
+    generateObject(node: ParserNonArraySchemaObject): Object {
         const ret: any = {};
         const schema = <ParserNonArraySchemaObject>hoek.clone(node);
         const properties = schema.properties;

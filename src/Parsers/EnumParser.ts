@@ -1,14 +1,14 @@
 import Chance from 'chance';
-import { ParserSchemaObject } from './Parser';
+import { ParserSchemaObject, ParserNonArraySchemaObject } from './Parser';
 const chance = new Chance();
 
 
 export default class EnumParser {
     canParse(node: ParserSchemaObject) {
-        return node.type === 'string' && 'enum' in node;
+        return 'type' in node && node.type === 'string' && 'enum' in node;
     }
 
-    parse(node: ParserSchemaObject) {
+    parse(node: ParserNonArraySchemaObject) {
         return this.parseEnum(node.enum);
     }
 

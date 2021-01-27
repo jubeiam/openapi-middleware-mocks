@@ -6,13 +6,17 @@ import DateParser from "./DateParser";
 import BooleanParser from "./BooleanParser";
 import AllOfParser from "./AllOfParser";
 import EnumParser from "./EnumParser";
+import OneOfParser from "./OneOfParser";
 import Chance from "chance";
 import { OpenAPIV3 } from "openapi-types";
 
 const chance = new Chance();
 const parsers: ParserFunc[] = [];
 
-export type ParserSchemaObject = ParserArraySchemaObject | ParserNonArraySchemaObject;
+export type ParserSchemaObject =
+    | ParserArraySchemaObject
+    | ParserNonArraySchemaObject
+    | ParserOneOfSchemaObject;
 
 export interface ParserArraySchemaObject extends ParserBaseSchemaObject {
     type: OpenAPIV3.ArraySchemaObjectType;
@@ -22,20 +26,23 @@ export interface ParserNonArraySchemaObject extends ParserBaseSchemaObject {
     type: OpenAPIV3.NonArraySchemaObjectType;
 }
 
-type ParserBaseSchemaObject = Omit<OpenAPIV3.BaseSchemaObject, 'allOf'> & {
-    allOf?: ParserSchemaObject[]
-    'x-type-options'?: any
-    'x-chance-type'?: Extract<keyof Chance.Chance, Function>
-    'x-type-value'?: any
+export interface ParserOneOfSchemaObject {
+    oneOf: ParserSchemaObject[];
 }
 
+type ParserBaseSchemaObject = Omit<OpenAPIV3.BaseSchemaObject, "allOf"> & {
+    allOf?: ParserSchemaObject[];
+    "x-type-options"?: any;
+    "x-chance-type"?: Extract<keyof Chance.Chance, Function>;
+    "x-type-value"?: any;
+};
+
 export interface ParserFunc {
-    canParse(node: ParserSchemaObject): boolean
-    parse(node: ParserSchemaObject): any
+    canParse(node: ParserSchemaObject): boolean;
+    parse(node: ParserSchemaObject): any;
 }
 
 export default class Parser {
-
     get parsers() {
         if (!parsers.length) {
             parsers.push.apply(parsers, [
@@ -47,6 +54,7 @@ export default class Parser {
                 new ObjectParser(this),
                 new ArrayParser(this),
                 new AllOfParser(this),
+                new OneOfParser(this),
             ]);
         }
 
@@ -54,21 +62,24 @@ export default class Parser {
     }
 
     getParser(node: ParserSchemaObject): ParserFunc {
-        let parser = this.parsers.find(p => p.canParse(node));
+        let parser = this.parsers.find((p) => p.canParse(node));
 
         if (!parser) {
-            throw new Error(`Can't handle ${node.type || "Unknown"} type.`);
+            throw new Error(`Can't parse type.`);
         }
 
         return parser;
     }
 
     parse(node: ParserSchemaObject): any {
-        if ('x-type-value' in node) {
+        if ("x-type-value" in node) {
             return node["x-type-value"];
         }
 
-        if ('x-chance-type' in node && typeof chance[node["x-chance-type"]] === 'function') {
+        if (
+            "x-chance-type" in node &&
+            typeof chance[node["x-chance-type"]] === "function"
+        ) {
             // @ts-ignore
             return chance[node["x-chance-type"]](node["x-type-options"]);
         }

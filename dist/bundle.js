@@ -1,28 +1,36 @@
 'use strict';
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+var url = require('url');
+var parser$1 = require('@apidevtools/swagger-parser');
+var Chance = require('chance');
+var drange = require('drange');
+var crypto = require('crypto');
+var path = require('path');
+var util$1 = require('util');
 
-var url = _interopDefault(require('url'));
-var parser$1 = _interopDefault(require('@apidevtools/swagger-parser'));
-var Chance = _interopDefault(require('chance'));
-var drange = _interopDefault(require('drange'));
-var crypto = _interopDefault(require('crypto'));
-var path = _interopDefault(require('path'));
-var util$1 = _interopDefault(require('util'));
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var url__default = /*#__PURE__*/_interopDefaultLegacy(url);
+var parser__default = /*#__PURE__*/_interopDefaultLegacy(parser$1);
+var Chance__default = /*#__PURE__*/_interopDefaultLegacy(Chance);
+var drange__default = /*#__PURE__*/_interopDefaultLegacy(drange);
+var crypto__default = /*#__PURE__*/_interopDefaultLegacy(crypto);
+var path__default = /*#__PURE__*/_interopDefaultLegacy(path);
+var util__default = /*#__PURE__*/_interopDefaultLegacy(util$1);
 
 /*! *****************************************************************************
-Copyright (c) Microsoft Corporation. All rights reserved.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the
-License at http://www.apache.org/licenses/LICENSE-2.0
+Copyright (c) Microsoft Corporation.
 
-THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-MERCHANTABLITY OR NON-INFRINGEMENT.
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
 
-See the Apache Version 2.0 License for specific language governing permissions
-and limitations under the License.
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
 
 function __awaiter(thisArg, _arguments, P, generator) {
@@ -35,12 +43,12 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-function commonjsRequire () {
-	throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
-}
-
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+function commonjsRequire () {
+	throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
 }
 
 var routes = createCommonjsModule(function (module, exports) {
@@ -60,14 +68,13 @@ var routes = createCommonjsModule(function (module, exports) {
 var Route = function(path){
   //using 'new' is optional
 
-  var src, re, keys = [];
+  var re, keys = [];
 
   if(path instanceof RegExp){
     re = path;
-    src = path.toString();
+    path.toString();
   }else {
     re = pathToRegExp(path, keys);
-    src = path;
   }
 
   return {
@@ -383,9 +390,9 @@ exports.error = (regexp, msg) => {
   throw new SyntaxError('Invalid regular expression: /' + regexp + '/: ' + msg);
 };
 });
-var util_1 = util.strToChars;
-var util_2 = util.tokenizeClass;
-var util_3 = util.error;
+util.strToChars;
+util.tokenizeClass;
+util.error;
 
 var wordBoundary = () => ({ type: types.POSITION, value: 'b' });
 var nonWordBoundary = () => ({ type: types.POSITION, value: 'B' });
@@ -834,7 +841,7 @@ var randexp = class RandExp {
    * @return {Object}
    */
   _randSelect(arr) {
-    if (arr instanceof drange) {
+    if (arr instanceof drange__default['default']) {
       return arr.index(this.randInt(0, arr.length - 1));
     }
     return arr[this.randInt(0, arr.length - 1)];
@@ -850,28 +857,28 @@ var randexp = class RandExp {
    */
   _expand(token) {
     if (token.type === lib.types.CHAR) {
-      return new drange(token.value);
+      return new drange__default['default'](token.value);
     } else if (token.type === lib.types.RANGE) {
-      return new drange(token.from, token.to);
+      return new drange__default['default'](token.from, token.to);
     } else {
-      let drange$1 = new drange();
+      let drange = new drange__default['default']();
       for (let i = 0; i < token.set.length; i++) {
         let subrange = this._expand(token.set[i]);
-        drange$1.add(subrange);
+        drange.add(subrange);
         if (this.ignoreCase) {
           for (let j = 0; j < subrange.length; j++) {
             let code = subrange.index(j);
             let otherCaseCode = this._toOtherCase(code);
             if (code !== otherCaseCode) {
-              drange$1.add(otherCaseCode);
+              drange.add(otherCaseCode);
             }
           }
         }
       }
       if (token.not) {
-        return this.defaultRange.clone().subtract(drange$1);
+        return this.defaultRange.clone().subtract(drange);
       } else {
-        return this.defaultRange.clone().intersect(drange$1);
+        return this.defaultRange.clone().intersect(drange);
       }
     }
   }
@@ -893,7 +900,7 @@ var randexp = class RandExp {
    * Default range of characters to generate from.
    */
   get defaultRange() {
-    return this._range = this._range || new drange(32, 126);
+    return this._range = this._range || new drange__default['default'](32, 126);
   }
 
   set defaultRange(range) {
@@ -937,10 +944,10 @@ var randexp = class RandExp {
   }
 };
 
-const chance = new Chance();
+const chance = new Chance__default['default']();
 class StringParser {
     canParse(node) {
-        return node.type === 'string';
+        return 'type' in node && node.type === 'string';
     }
     parse(node) {
         return this.parseString(node);
@@ -2028,10 +2035,10 @@ exports.isInteger = Number.isSafeInteger;
 exports.ignore = function () { };
 
 
-exports.inherits = util$1.inherits;
+exports.inherits = util__default['default'].inherits;
 
 
-exports.format = util$1.format;
+exports.format = util__default['default'].format;
 
 
 exports.transform = function (source, transform, options) {
@@ -2075,7 +2082,7 @@ exports.transform = function (source, transform, options) {
 };
 
 
-exports.uniqueFilename = function (path$1, extension) {
+exports.uniqueFilename = function (path, extension) {
 
     if (extension) {
         extension = extension[0] !== '.' ? '.' + extension : extension;
@@ -2084,9 +2091,9 @@ exports.uniqueFilename = function (path$1, extension) {
         extension = '';
     }
 
-    path$1 = path.resolve(path$1);
-    const name = [Date.now(), process.pid, crypto.randomBytes(8).toString('hex')].join('-') + extension;
-    return path.join(path$1, name);
+    path = path__default['default'].resolve(path);
+    const name = [Date.now(), process.pid, crypto__default['default'].randomBytes(8).toString('hex')].join('-') + extension;
+    return path__default['default'].join(path, name);
 };
 
 
@@ -2113,45 +2120,45 @@ exports.shallow = function (source) {
     return target;
 };
 });
-var lib_1 = lib$1.clone;
-var lib_2 = lib$1.merge;
-var lib_3 = lib$1.applyToDefaults;
-var lib_4 = lib$1.cloneWithShallow;
-var lib_5 = lib$1.applyToDefaultsWithShallow;
-var lib_6 = lib$1.deepEqual;
-var lib_7 = lib$1.unique;
-var lib_8 = lib$1.mapToObject;
-var lib_9 = lib$1.intersect;
-var lib_10 = lib$1.contain;
-var lib_11 = lib$1.flatten;
-var lib_12 = lib$1.reach;
-var lib_13 = lib$1.reachTemplate;
-var lib_14 = lib$1.formatStack;
-var lib_15 = lib$1.formatTrace;
-var lib_16 = lib$1.callStack;
-var lib_17 = lib$1.displayStack;
-var lib_18 = lib$1.abortThrow;
-var lib_19 = lib$1.abort;
-var lib_20 = lib$1.assert;
-var lib_21 = lib$1.Timer;
-var lib_22 = lib$1.Bench;
-var lib_23 = lib$1.escapeRegex;
-var lib_24 = lib$1.base64urlEncode;
-var lib_25 = lib$1.base64urlDecode;
-var lib_26 = lib$1.escapeHeaderAttribute;
-var lib_27 = lib$1.escapeHtml;
-var lib_28 = lib$1.escapeJavaScript;
-var lib_29 = lib$1.escapeJson;
-var lib_30 = lib$1.nextTick;
-var lib_31 = lib$1.once;
-var lib_32 = lib$1.isInteger;
-var lib_33 = lib$1.ignore;
-var lib_34 = lib$1.inherits;
-var lib_35 = lib$1.format;
-var lib_36 = lib$1.transform;
-var lib_37 = lib$1.uniqueFilename;
-var lib_38 = lib$1.stringify;
-var lib_39 = lib$1.shallow;
+lib$1.clone;
+lib$1.merge;
+lib$1.applyToDefaults;
+lib$1.cloneWithShallow;
+lib$1.applyToDefaultsWithShallow;
+lib$1.deepEqual;
+lib$1.unique;
+lib$1.mapToObject;
+lib$1.intersect;
+lib$1.contain;
+lib$1.flatten;
+lib$1.reach;
+lib$1.reachTemplate;
+lib$1.formatStack;
+lib$1.formatTrace;
+lib$1.callStack;
+lib$1.displayStack;
+lib$1.abortThrow;
+lib$1.abort;
+lib$1.assert;
+lib$1.Timer;
+lib$1.Bench;
+lib$1.escapeRegex;
+lib$1.base64urlEncode;
+lib$1.base64urlDecode;
+lib$1.escapeHeaderAttribute;
+lib$1.escapeHtml;
+lib$1.escapeJavaScript;
+lib$1.escapeJson;
+lib$1.nextTick;
+lib$1.once;
+lib$1.isInteger;
+lib$1.ignore;
+lib$1.inherits;
+lib$1.format;
+lib$1.transform;
+lib$1.uniqueFilename;
+lib$1.stringify;
+lib$1.shallow;
 
 //@ts-ignore
 class ObjectParser {
@@ -2159,7 +2166,7 @@ class ObjectParser {
         this.parser = parser;
     }
     canParse(node) {
-        return node.type === 'object';
+        return 'type' in node && node.type === 'object';
     }
     parse(node) {
         return this.generateObject(node);
@@ -2178,13 +2185,13 @@ class ObjectParser {
     }
 }
 
-const chance$1 = new Chance();
+const chance$1 = new Chance__default['default']();
 class ArrayParser {
     constructor(parser) {
         this.parser = parser;
     }
     canParse(node) {
-        return node.type === 'array';
+        return 'type' in node && node.type === 'array';
     }
     parse(node) {
         return 'items' in node && this.generateArray(node);
@@ -2203,7 +2210,7 @@ class ArrayParser {
     }
 }
 
-const chance$2 = new Chance();
+const chance$2 = new Chance__default['default']();
 class NumberParser {
     canParse(node) {
         return this.isInteger(node) || this.isFloating(node);
@@ -2238,17 +2245,17 @@ class NumberParser {
         return bounds;
     }
     isInteger(node) {
-        return node.type === 'integer';
+        return 'type' in node && node.type === 'integer';
     }
     isFloating(node) {
-        return node.type === 'number' && 'format' in node && (node.format === 'float' || node.format === 'double');
+        return 'type' in node && node.type === 'number' && 'format' in node && (node.format === 'float' || node.format === 'double');
     }
 }
 
-const chance$3 = new Chance();
+const chance$3 = new Chance__default['default']();
 class DateParser {
     canParse(node) {
-        return node.type === 'string' && 'format' in node && node.format === 'date';
+        return 'type' in node && node.type === 'string' && 'format' in node && node.format === 'date';
     }
     parse(node) {
         const d = new Date(chance$3.timestamp());
@@ -2256,10 +2263,10 @@ class DateParser {
     }
 }
 
-const chance$4 = new Chance();
+const chance$4 = new Chance__default['default']();
 class BooleanParser {
     canParse(node) {
-        return node.type === 'boolean';
+        return 'type' in node && node.type === 'boolean';
     }
     parse(node) {
         return chance$4.bool(node['x-type-options']);
@@ -2281,10 +2288,10 @@ class AllOfParser {
     }
 }
 
-const chance$5 = new Chance();
+const chance$5 = new Chance__default['default']();
 class EnumParser {
     canParse(node) {
-        return node.type === 'string' && 'enum' in node;
+        return 'type' in node && node.type === 'string' && 'enum' in node;
     }
     parse(node) {
         return this.parseEnum(node.enum);
@@ -2295,7 +2302,29 @@ class EnumParser {
     }
 }
 
-const chance$6 = new Chance();
+class OneOfParser {
+    constructor(parser) {
+        this.parser = parser;
+    }
+    canParse(node) {
+        return 'oneOf' in node;
+    }
+    parse(node) {
+        if (!node.oneOf) {
+            throw new Error('Invalid node');
+        }
+        const oneOf = node.oneOf;
+        const rnd = this.getRandomInt(0, oneOf.length - 1);
+        return this.parser.parse(oneOf[rnd]);
+    }
+    getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+}
+
+const chance$6 = new Chance__default['default']();
 const parsers = [];
 class Parser {
     get parsers() {
@@ -2309,22 +2338,24 @@ class Parser {
                 new ObjectParser(this),
                 new ArrayParser(this),
                 new AllOfParser(this),
+                new OneOfParser(this),
             ]);
         }
         return parsers;
     }
     getParser(node) {
-        let parser = this.parsers.find(p => p.canParse(node));
+        let parser = this.parsers.find((p) => p.canParse(node));
         if (!parser) {
-            throw new Error(`Can't handle ${node.type || "Unknown"} type.`);
+            throw new Error(`Can't parse type.`);
         }
         return parser;
     }
     parse(node) {
-        if ('x-type-value' in node) {
+        if ("x-type-value" in node) {
             return node["x-type-value"];
         }
-        if ('x-chance-type' in node && typeof chance$6[node["x-chance-type"]] === 'function') {
+        if ("x-chance-type" in node &&
+            typeof chance$6[node["x-chance-type"]] === "function") {
             // @ts-ignore
             return chance$6[node["x-chance-type"]](node["x-type-options"]);
         }
@@ -2487,7 +2518,7 @@ function index (config) {
             throw new Error("Cannot specify both ignorePaths and mockPaths in config");
         }
         let router;
-        const api = yield parser$1.dereference(config.openApiFile || config.openApi);
+        const api = yield parser__default['default'].dereference(config.openApiFile || config.openApi);
         if (config.ignorePaths) {
             api.paths = PrunePaths(api.paths, config.ignorePaths);
         }
@@ -2500,7 +2531,7 @@ function index (config) {
          */
         return function (req, res, next) {
             const method = req.method;
-            const path = url.parse(req.url).pathname;
+            const path = url__default['default'].parse(req.url).pathname;
             const route = method.toUpperCase() + ' ' + path;
             const matchingRoute = router.match(route);
             res.setHeader("Content-Type", "application/json");

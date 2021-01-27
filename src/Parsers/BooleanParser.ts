@@ -1,13 +1,13 @@
 import Chance from 'chance';
-import { ParserSchemaObject } from './Parser';
+import { ParserSchemaObject, ParserNonArraySchemaObject } from './Parser';
 const chance = new Chance();
 
 export default class BooleanParser {
     canParse(node: ParserSchemaObject) {
-        return node.type === 'boolean';
+        return 'type' in node && node.type === 'boolean';
     }
 
-    parse(node: ParserSchemaObject) {
+    parse(node: ParserNonArraySchemaObject) {
         return chance.bool(node['x-type-options']);
     }
 }

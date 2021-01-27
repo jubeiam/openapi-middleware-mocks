@@ -85,3 +85,18 @@ test('Add new Pet - with valid data', async () => {
     expect(response.statusCode).toBe(201)
 })
 
+
+test('Get random pet', async () => {
+    const response = await invoke({
+        url: '/random-pet',
+        method: 'GET'
+    }, {
+        openApiFile: api,
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body.id).toBeDefined()
+    expect(response.body.name).toBeDefined()
+    expect(response.body.tag).toBeDefined()
+})
+

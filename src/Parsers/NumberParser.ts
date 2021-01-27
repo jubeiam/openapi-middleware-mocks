@@ -1,5 +1,5 @@
 import Chance from 'chance';
-import { ParserSchemaObject } from './Parser';
+import { ParserSchemaObject, ParserNonArraySchemaObject } from './Parser';
 const chance = new Chance();
 
 export default class NumberParser {
@@ -7,7 +7,7 @@ export default class NumberParser {
         return this.isInteger(node) || this.isFloating(node);
     }
 
-    parse(node: ParserSchemaObject) {
+    parse(node: ParserNonArraySchemaObject) {
         if (this.isInteger(node))
             return this.generateInteger(node);
 
@@ -15,12 +15,12 @@ export default class NumberParser {
             return chance.floating(node['x-type-options']);
     }
 
-    generateInteger(node: ParserSchemaObject) {
+    generateInteger(node: ParserNonArraySchemaObject) {
         let bounds = this.resolveBounds(node);
         return chance.integer(bounds) * (node.multipleOf || 1);
     }
 
-    resolveBounds(node: ParserSchemaObject) {
+    resolveBounds(node: ParserNonArraySchemaObject) {
         let bounds = { min: Number.MIN_SAFE_INTEGER, max: Number.MAX_SAFE_INTEGER };
 
         Object.assign(bounds, node['x-type-options']);
@@ -47,10 +47,10 @@ export default class NumberParser {
     }
 
     isInteger(node: ParserSchemaObject) {
-        return node.type === 'integer';
+        return 'type' in node && node.type === 'integer';
     }
 
     isFloating(node: ParserSchemaObject) {
-        return node.type === 'number' && 'format' in node && (node.format === 'float' || node.format === 'double');
+        return 'type' in node && node.type === 'number' && 'format' in node && (node.format === 'float' || node.format === 'double');
     }
 }
