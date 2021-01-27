@@ -26,6 +26,7 @@ const openApiMockerMiddleware = await openApiMocker({
 });
 
 /*...*/
+app.use(bodyParser.json()) // remember to use body parser 
 app.use(openApiMockerMiddleware);
 ```
 
