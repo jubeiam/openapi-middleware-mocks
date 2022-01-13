@@ -2264,12 +2264,34 @@ class DateParser {
 }
 
 const chance$4 = new Chance__default['default']();
+class DateTimeParser {
+    canParse(node) {
+        return 'type' in node && node.type === 'string' && 'format' in node && node.format === 'date-time';
+    }
+    parse(node) {
+        const d = new Date(chance$4.timestamp());
+        return d.getFullYear()
+            + '-'
+            + ("0" + (d.getMonth() + 1)).slice(-2)
+            + '-'
+            + ("0" + d.getDate()).slice(-2)
+            + 'T'
+            + ("0" + (d.getHours() + 1)).slice(-2)
+            + ':'
+            + ("0" + (d.getMinutes() + 1)).slice(-2)
+            + ':'
+            + ("0" + (d.getSeconds() + 1)).slice(-2)
+            + 'Z';
+    }
+}
+
+const chance$5 = new Chance__default['default']();
 class BooleanParser {
     canParse(node) {
         return 'type' in node && node.type === 'boolean';
     }
     parse(node) {
-        return chance$4.bool(node['x-type-options']);
+        return chance$5.bool(node['x-type-options']);
     }
 }
 
@@ -2288,7 +2310,7 @@ class AllOfParser {
     }
 }
 
-const chance$5 = new Chance__default['default']();
+const chance$6 = new Chance__default['default']();
 class EnumParser {
     canParse(node) {
         return 'type' in node && node.type === 'string' && 'enum' in node;
@@ -2297,7 +2319,7 @@ class EnumParser {
         return this.parseEnum(node.enum);
     }
     parseEnum(enumNode) {
-        let index = chance$5.integer({ min: 0, max: enumNode.length - 1 });
+        let index = chance$6.integer({ min: 0, max: enumNode.length - 1 });
         return enumNode[index];
     }
 }
@@ -2324,7 +2346,7 @@ class OneOfParser {
     }
 }
 
-const chance$6 = new Chance__default['default']();
+const chance$7 = new Chance__default['default']();
 const parsers = [];
 class Parser {
     get parsers() {
@@ -2334,6 +2356,7 @@ class Parser {
                 new NumberParser(),
                 new BooleanParser(),
                 new DateParser(),
+                new DateTimeParser(),
                 new StringParser(),
                 new ObjectParser(this),
                 new ArrayParser(this),
@@ -2355,9 +2378,9 @@ class Parser {
             return node["x-type-value"];
         }
         if ("x-chance-type" in node &&
-            typeof chance$6[node["x-chance-type"]] === "function") {
+            typeof chance$7[node["x-chance-type"]] === "function") {
             // @ts-ignore
-            return chance$6[node["x-chance-type"]](node["x-type-options"]);
+            return chance$7[node["x-chance-type"]](node["x-type-options"]);
         }
         return this.getParser(node).parse(node);
     }
