@@ -8,7 +8,8 @@ export default class DateParser {
     }
 
     parse(node: ParserSchemaObject) {
-        const d = new Date(chance.timestamp())
+        const d = new Date(chance.timestamp() * 1000)
+        d.setFullYear(new Date().getFullYear());
 
         return d.getFullYear() + '-' + ("0" + (d.getMonth() + 1)).slice(-2) + '-' + ("0" + d.getDate()).slice(-2);
     }
