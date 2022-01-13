@@ -2,9 +2,9 @@ import Chance from 'chance';
 import { ParserSchemaObject } from './Parser';
 const chance = new Chance();
 
-export default class DateParser {
+export default class DateTimeParser {
     canParse(node: ParserSchemaObject) {
-        return node.type === 'string' && 'format' in node && node.format === 'date-time';
+        return 'type' in node && node.type === 'string' && 'format' in node && node.format === 'date-time';
     }
 
     parse(node: ParserSchemaObject) {

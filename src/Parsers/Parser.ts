@@ -3,6 +3,7 @@ import ObjectParser from "./ObjectParser";
 import ArrayParser from "./ArrayParser";
 import NumberParser from "./NumberParser";
 import DateParser from "./DateParser";
+import DateTimeParser from './DateTimeParser';
 import BooleanParser from "./BooleanParser";
 import AllOfParser from "./AllOfParser";
 import EnumParser from "./EnumParser";
@@ -50,6 +51,7 @@ export default class Parser {
                 new NumberParser(),
                 new BooleanParser(),
                 new DateParser(),
+                new DateTimeParser(),
                 new StringParser(),
                 new ObjectParser(this),
                 new ArrayParser(this),
