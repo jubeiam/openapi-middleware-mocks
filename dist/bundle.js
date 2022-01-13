@@ -2258,7 +2258,8 @@ class DateParser {
         return 'type' in node && node.type === 'string' && 'format' in node && node.format === 'date';
     }
     parse(node) {
-        const d = new Date(chance$3.timestamp());
+        const d = new Date(chance$3.timestamp() * 1000);
+        d.setFullYear(new Date().getFullYear());
         return d.getFullYear() + '-' + ("0" + (d.getMonth() + 1)).slice(-2) + '-' + ("0" + d.getDate()).slice(-2);
     }
 }
@@ -2269,7 +2270,8 @@ class DateTimeParser {
         return 'type' in node && node.type === 'string' && 'format' in node && node.format === 'date-time';
     }
     parse(node) {
-        const d = new Date(chance$4.timestamp());
+        const d = new Date(chance$4.timestamp() * 1000);
+        d.setFullYear(new Date().getFullYear());
         return d.getFullYear()
             + '-'
             + ("0" + (d.getMonth() + 1)).slice(-2)
