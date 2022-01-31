@@ -26,7 +26,7 @@ const openApiMockerMiddleware = await openApiMocker({
 });
 
 /*...*/
-app.use(bodyParser.json()) // remember to use body parser 
+app.use(bodyParser.json()) // remember to use body parser
 app.use(openApiMockerMiddleware);
 ```
 
@@ -94,3 +94,15 @@ status:
   x-type-value:
     type: "adopted"
 ```
+
+### Pass value to be returned by server
+
+When requesting mocked data you can pass object to modify returning value by definition.
+Under the hood it uses lodash set function
+
+ex:
+```
+'x-force-mock': '{"name": "Burek"}'
+```
+
+returned object will have property with name set to "Burek"

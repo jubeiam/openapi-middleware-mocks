@@ -4,6 +4,7 @@ interface LocalRequest {
     method: 'GET' | 'POST' | 'PUT'
     url: string
     body?: any
+    headers?: any
 }
 
 interface LocalResponse {

@@ -41,7 +41,7 @@ test('Get invalid route', async () => {
     expect(response.body.message).toEqual('not found')
 })
 
-test('Get malformat route', async () => {
+test('Get malformed route', async () => {
     const response = await invoke({
         url: 'pets',
         method: 'GET'
@@ -100,3 +100,56 @@ test('Get random pet', async () => {
     expect(response.body.tag).toBeDefined()
 })
 
+
+test('Force mock valid property', async () => {
+    const response = await invoke({
+        url: '/pets/1',
+        method: 'GET',
+        headers: {
+            'x-force-mock': '{"name": "Burek"}'
+        }
+    }, {
+        openApiFile: api,
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body.id).toBeDefined()
+    expect(response.body.name).toEqual('Burek')
+    expect(response.body.tag).toBeDefined()
+})
+
+test('Force mock invalid property', async () => {
+    const response = await invoke({
+        url: '/pets/1',
+        method: 'GET',
+        headers: {
+            'x-force-mock': '{"name1": "Burek"}'
+        }
+    }, {
+        openApiFile: api,
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body.id).toBeDefined()
+    expect(response.body.name).toBeDefined()
+    expect(response.body.name1).toBeDefined()
+    expect(response.body.tag).toBeDefined()
+})
+
+
+test('Force mock malformed', async () => {
+    const response = await invoke({
+        url: '/pets/1',
+        method: 'GET',
+        headers: {
+            'x-force-mock': 'e1": "Burek"}'
+        }
+    }, {
+        openApiFile: api,
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body.id).toBeDefined()
+    expect(response.body.name).toBeDefined()
+    expect(response.body.tag).toBeDefined()
+})

@@ -1,3 +1,4 @@
+import { set } from 'lodash'
 import Parser, { ParserSchemaObject } from "./Parsers/Parser";
 import { OpenAPIV3 } from "openapi-types";
 
@@ -23,7 +24,9 @@ export function validateDataAgainstSchema(data: any, schema: ParserSchemaObject)
 
 export interface RouteData {
     body: any
+    method: string
     params: string[]
+    overrides: any
 }
 
 function getRequestBodySchema(requestBody: OpenAPIV3.RequestBodyObject) {
@@ -60,7 +63,15 @@ function validateRequestBody(operation: OpenAPIV3.OperationObject, data: any) {
     return null
 }
 
-export default function PrepareResponse(operation: OpenAPIV3.OperationObject) {
+function applyOverride(config: any, what: any) {
+    Object.entries(config).forEach((entry: any) => {
+        set(what, entry[0], entry[1])
+    })
+
+    return what
+}
+
+export default function prepareResponse(operation: OpenAPIV3.OperationObject) {
 
     return (routeData: RouteData) => {
         const responses = operation.responses
@@ -80,6 +91,7 @@ export default function PrepareResponse(operation: OpenAPIV3.OperationObject) {
                 if ('content' in responses[responseCode]) {
                     responseBody = getResponseSchema(responseCode, responses)
                     responseBody = parser.parse(responseBody)
+                    responseBody = applyOverride(routeData.overrides, responseBody)
                 }
 
                 break

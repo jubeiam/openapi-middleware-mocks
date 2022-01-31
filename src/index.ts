@@ -58,12 +58,22 @@ export default async function (config: Config) {
       console.log("Request: %s %s", req.method, path);
     }
 
+    let overrides = {}
     try {
+      overrides = JSON.parse(req.headers['x-force-mock'])
+    } catch (err) {}
+
+    try {
+
+
       const response = matchingRoute.fn(<RouteData>{
         body: req.body,
         method: req.method,
-        params: req.params
+        params: req.params,
+        overrides
       });
+
+
       let body = response[0]
       const statusCode = response[1]
 

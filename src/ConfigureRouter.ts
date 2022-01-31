@@ -1,5 +1,5 @@
 import Routes from "routes";
-import PrepareResponse from "./PrepareResponse";
+import prepareResponse from "./PrepareResponse";
 import { OpenAPIV3 } from "openapi-types";
 
 export function isMethod(name: string): boolean {
@@ -38,7 +38,7 @@ export function addRoutes(pathItemObject: OpenAPIV3.PathItemObject, router: Rout
         }
 
         // @ts-ignore
-        const respond = PrepareResponse(pathItemObject[methodName]);
+        const respond = prepareResponse(pathItemObject[methodName]);
         router.addRoute(methodName.toUpperCase() + ' ' + route, respond);
     }
 }
