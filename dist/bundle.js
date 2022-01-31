@@ -2,6 +2,7 @@
 
 var url = require('url');
 var parser$1 = require('@apidevtools/swagger-parser');
+var lodash = require('lodash');
 var Chance = require('chance');
 var drange = require('drange');
 var crypto = require('crypto');
@@ -2431,7 +2432,13 @@ function validateRequestBody(operation, data) {
     }
     return null;
 }
-function PrepareResponse(operation) {
+function applyOverride(config, what) {
+    Object.entries(config).forEach((entry) => {
+        lodash.set(what, entry[0], entry[1]);
+    });
+    return what;
+}
+function prepareResponse(operation) {
     return (routeData) => {
         const responses = operation.responses;
         let responseCode = '500', responseBody = null;
@@ -2447,6 +2454,7 @@ function PrepareResponse(operation) {
                 if ('content' in responses[responseCode]) {
                     responseBody = getResponseSchema(responseCode, responses);
                     responseBody = parser.parse(responseBody);
+                    responseBody = applyOverride(routeData.overrides, responseBody);
                 }
                 break;
             }
@@ -2485,7 +2493,7 @@ function addRoutes(pathItemObject, router, route) {
             console.log("ADDING ROUTE: ", methodName.toUpperCase() + ' ' + route);
         }
         // @ts-ignore
-        const respond = PrepareResponse(pathItemObject[methodName]);
+        const respond = prepareResponse(pathItemObject[methodName]);
         router.addRoute(methodName.toUpperCase() + ' ' + route, respond);
     }
 }
@@ -2571,11 +2579,17 @@ function index (config) {
             if (process.env.debug) {
                 console.log("Request: %s %s", req.method, path);
             }
+            let overrides = {};
+            try {
+                overrides = JSON.parse(req.headers['x-force-mock']);
+            }
+            catch (err) { }
             try {
                 const response = matchingRoute.fn({
                     body: req.body,
                     method: req.method,
-                    params: req.params
+                    params: req.params,
+                    overrides
                 });
                 let body = response[0];
                 const statusCode = response[1];
