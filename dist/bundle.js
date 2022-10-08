@@ -2394,7 +2394,7 @@ const djv = require('djv');
 const parser = new Parser();
 function validateDataAgainstSchema(data, schema) {
     const env = djv({
-        version: 'draft-04'
+        version: 'draft-04',
     });
     const jsonSchema = castToJsonSchema(schema);
     env.addSchema('v', jsonSchema);
@@ -2410,20 +2410,20 @@ function getRequestBodySchema(requestBody) {
 }
 function getResponseSchema(responseCode, responses) {
     var _a, _b;
-    const r = (responses[responseCode] || responses['default']);
+    const r = ((responses[responseCode] || responses['default']));
     return (_b = (_a = r === null || r === void 0 ? void 0 : r.content) === null || _a === void 0 ? void 0 : _a['application/json']) === null || _b === void 0 ? void 0 : _b.schema;
 }
 function validateRequestBody(operation, data) {
     let responseSchema, responseCode, responseBody;
     if (operation.requestBody && 'content' in operation.requestBody) {
-        const requestBodySchema = getRequestBodySchema(operation.requestBody);
+        const requestBodySchema = (getRequestBodySchema(operation.requestBody));
         let validRequestBody = 'schema missing';
         if (requestBodySchema) {
             validRequestBody = validateDataAgainstSchema(data, requestBodySchema);
         }
         if (true !== validRequestBody) {
             responseCode = '400';
-            responseBody = responseSchema = getResponseSchema(responseCode, operation.responses);
+            responseBody = responseSchema = (getResponseSchema(responseCode, operation.responses));
             if (responseSchema) {
                 responseBody = parser.parse(responseSchema);
             }
@@ -2441,7 +2441,9 @@ function applyOverride(config, what) {
 function prepareResponse(operation) {
     return (routeData) => {
         const responses = operation.responses;
-        let responseCode = '500', responseBody = null;
+        let responseCode = '500';
+        let responseBody = null;
+        const headers = new Map();
         if (routeData.body) {
             const resultRequest = validateRequestBody(operation, routeData.body);
             if (resultRequest) {
@@ -2452,9 +2454,16 @@ function prepareResponse(operation) {
             const responseCodeInt = parseInt(responseCode);
             if (199 < responseCodeInt && responseCodeInt < 300) {
                 if ('content' in responses[responseCode]) {
-                    responseBody = getResponseSchema(responseCode, responses);
-                    responseBody = parser.parse(responseBody);
+                    const responseSchema = getResponseSchema(responseCode, responses);
+                    responseBody = parser.parse(responseSchema);
+                    console.log(responseBody);
                     responseBody = applyOverride(routeData.overrides, responseBody);
+                    if ('headers' in responses[responseCode]) {
+                        const responseHeaders = (responses[responseCode]).headers;
+                        for (const k in responseHeaders) {
+                            headers.set(k, parser.parse(((responseHeaders[k]).schema)));
+                        }
+                    }
                 }
                 break;
             }
@@ -2464,7 +2473,7 @@ function prepareResponse(operation) {
             responseBody = getResponseSchema('default', responses);
             responseBody = parser.parse(responseBody);
         }
-        return [responseBody, parseInt(responseCode)];
+        return [responseBody, parseInt(responseCode), headers];
     };
 }
 
@@ -2545,13 +2554,13 @@ function PrunePaths(paths, passthroughPaths, keep = false) {
 function index (config) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!config.openApiFile && !config.openApi) {
-            throw new Error("Config is missing `openApiDocument` parameter");
+            throw new Error('Config is missing `openApiDocument` parameter');
         }
         if (config.ignorePaths && config.mockPaths) {
-            throw new Error("Cannot specify both ignorePaths and mockPaths in config");
+            throw new Error('Cannot specify both ignorePaths and mockPaths in config');
         }
         let router;
-        const api = yield parser__default['default'].dereference(config.openApiFile || config.openApi);
+        const api = (yield parser__default['default'].dereference(config.openApiFile || config.openApi));
         if (config.ignorePaths) {
             api.paths = PrunePaths(api.paths, config.ignorePaths);
         }
@@ -2567,7 +2576,7 @@ function index (config) {
             const path = url__default['default'].parse(req.url).pathname;
             const route = method.toUpperCase() + ' ' + path;
             const matchingRoute = router.match(route);
-            res.setHeader("Content-Type", "application/json");
+            res.setHeader('Content-Type', 'application/json');
             if (!matchingRoute && config.format404) {
                 res.statusCode = 404;
                 res.write(JSON.stringify(config.format404(next)));
@@ -2577,7 +2586,7 @@ function index (config) {
                 return next();
             }
             if (process.env.debug) {
-                console.log("Request: %s %s", req.method, path);
+                console.log('Request: %s %s', req.method, path);
             }
             let overrides = {};
             try {
@@ -2589,15 +2598,22 @@ function index (config) {
                     body: req.body,
                     method: req.method,
                     params: req.params,
-                    overrides
+                    overrides,
                 });
                 let body = response[0];
                 const statusCode = response[1];
+                const headers = response[2];
+                console.log('INDEX', headers);
                 res.statusCode = statusCode;
                 if (config.format400 && 400 === res.statusCode) {
                     body = config.format400();
                 }
-                res.write(body !== null ? JSON.stringify(body) : "");
+                if (statusCode >= 200 && statusCode < 300 && headers) {
+                    headers.forEach((value, key) => {
+                        res.setHeader(key.toLowerCase(), value);
+                    });
+                }
+                res.write(body !== null ? JSON.stringify(body) : '');
             }
             catch (e) {
                 res.statusCode = 500;
