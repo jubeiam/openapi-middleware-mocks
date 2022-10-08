@@ -29,6 +29,21 @@ paths:
               description: A link to the next page of responses
               schema:
                 type: string
+            X-Rate-Limit-Limit:
+              description: The number of allowed requests in the current period
+              schema:
+                type: integer
+            X-Total-Pets:
+              description: The number of all pets in the api
+              schema:
+                type: integer
+                minimum: 1000
+                maximum: 1002
+            X-Pet-of-day:
+              description: The number of all pets in the api
+              schema:
+                type: string
+                x-chance-type: name
           content:
             application/json:
               schema:
