@@ -7,6 +7,7 @@ const api = path.join(__dirname, '../', 'petstore.yaml')
 
 describe('Pets mock server', () => {
     let app
+    let server
     beforeAll(() => {
         return prepareServer({
             openApiFile: api,
@@ -15,15 +16,19 @@ describe('Pets mock server', () => {
                     message: 'not found',
                 }
             },
-        }).then((server) => {
-            app = server
+        }).then((ex) => {
+            app = ex
 
-            app.listen(function (err) {
+            server = app.listen(function (err) {
                 if (err) {
                     return process.exit(1)
                 }
             })
         })
+    })
+
+    afterAll(() => {
+        server.close()
     })
 
     test('Get pets list', () => {
