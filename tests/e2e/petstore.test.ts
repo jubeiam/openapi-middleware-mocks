@@ -87,17 +87,7 @@ describe('Pets mock server', () => {
             .expect(201)
     })
 
-    test('Get random pet', async () => {
-        const response = await invoke(
-            {
-                url: '/random-pet',
-                method: 'GET',
-            },
-            {
-                openApiFile: api,
-            }
-        )
-
+    test('Get random pet', () => {
         return request(app)
             .get('/random-pet')
             .expect('Content-Type', /json/)
