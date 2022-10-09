@@ -1,17 +1,18 @@
-import PrunePaths from '../../src/PrunePaths';
-import parser from "@apidevtools/swagger-parser";
-import { OpenAPIV3 } from 'openapi-types';
+import PrunePaths from '../../src/PrunePaths'
+import parser from '@apidevtools/swagger-parser'
+import { OpenAPIV3 } from 'openapi-types'
 
-let paths;
+let paths
 
 beforeEach(async () => {
-    const api = <OpenAPIV3.Document>await parser.dereference('./tests/petstore.yaml');
+    const api = <OpenAPIV3.Document>await parser.dereference('./tests/petstore.yaml')
     paths = api.paths
 })
 
 test('PrunePaths remove path', () => {
     const prunedPaths = PrunePaths(paths, ['/pets'])
 
+    expect(prunedPaths['/pets']).toBeFalsy()
     expect(prunedPaths['/pets']).toBeFalsy()
 })
 

@@ -1,23 +1,22 @@
-import Parser from "./Parsers/Parser";
-import { OpenAPIV3 } from "openapi-types";
+import Parser, { ParserSchemaObject } from './Parsers/Parser'
+import { OpenAPIV3 } from 'openapi-types'
 
-const parser = new Parser();
+const parser = new Parser()
 
 export default function MockData(definition: OpenAPIV3.ResponseObject, responseCode: number) {
+    const def = (definition.content || {})['application/json']
 
-  const def = (definition.content || {})["application/json"];
-
-  if (!def) {
-    return [null, responseCode];
-  }
-
-  if (!def.schema) {
-    if (process.env.debug) {
-      console.warn("Schema not found");
+    if (!def) {
+        return [null, responseCode]
     }
 
-    return [null, 500];
-  }
+    if (!def.schema) {
+        if (process.env.debug) {
+            console.warn('Schema not found')
+        }
 
-  return [parser.parse(def.schema), responseCode]
+        return [null, 500]
+    }
+
+    return [parser.parse(<ParserSchemaObject>def.schema), responseCode]
 }

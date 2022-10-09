@@ -1,10 +1,9 @@
-import url from 'url'
+import * as Express from 'express'
 import parser from '@apidevtools/swagger-parser'
 import ConfigureRouter from './ConfigureRouter'
 import PrunePaths from './PrunePaths'
 import Routes from 'routes'
 import { OpenAPIV3 } from 'openapi-types'
-import { RouteData } from './PrepareResponse'
 
 export interface Config {
     openApiFile?: string
@@ -12,7 +11,7 @@ export interface Config {
     ignorePaths?: string[]
     mockPaths?: string[]
     format400?: () => {}
-    format404?: (next: Function) => {}
+    format404?: () => {}
 }
 
 export default async function (config: Config) {
@@ -21,16 +20,12 @@ export default async function (config: Config) {
     }
 
     if (config.ignorePaths && config.mockPaths) {
-        throw new Error(
-            'Cannot specify both ignorePaths and mockPaths in config'
-        )
+        throw new Error('Cannot specify both ignorePaths and mockPaths in config')
     }
 
     let router: Routes
 
-    const api = <OpenAPIV3.Document>(
-        await parser.dereference(config.openApiFile || config.openApi)
-    )
+    const api = <OpenAPIV3.Document>await parser.dereference(config.openApiFile || config.openApi)
     if (config.ignorePaths) {
         api.paths = PrunePaths(api.paths, config.ignorePaths)
     } else if (config.mockPaths) {
@@ -42,18 +37,16 @@ export default async function (config: Config) {
     /**
      * Middleware
      */
-    return function (req: any, res: any, next: any) {
+    return function (req: Express.Request, res: Express.Response, next: Express.NextFunction) {
         const method = req.method
-        const path = url.parse(req.url).pathname
+        const path = req.path
         const route = method.toUpperCase() + ' ' + path
         const matchingRoute = router.match(route)
 
         res.setHeader('Content-Type', 'application/json')
 
         if (!matchingRoute && config.format404) {
-            res.statusCode = 404
-            res.write(JSON.stringify(config.format404(next)))
-            return
+            return res.status(404).send(config.format404())
         } else if (!matchingRoute) {
             return next()
         }
@@ -64,11 +57,15 @@ export default async function (config: Config) {
 
         let overrides = {}
         try {
-            overrides = JSON.parse(req.headers['x-force-mock'])
+            overrides = JSON.parse(
+                Array.isArray(req.headers['x-force-mock'])
+                    ? req.headers['x-force-mock'][0]
+                    : req.headers['x-force-mock']
+            )
         } catch (err) {}
 
         try {
-            const response = matchingRoute.fn(<RouteData>{
+            const response = matchingRoute.fn({
                 body: req.body,
                 method: req.method,
                 params: req.params,
@@ -76,18 +73,14 @@ export default async function (config: Config) {
             })
 
             let body = response[0]
-            const statusCode = response[1]
+            res.statusCode = response[1]
             const headers = response[2]
-
-            console.log('INDEX', headers)
-
-            res.statusCode = statusCode
 
             if (config.format400 && 400 === res.statusCode) {
                 body = config.format400()
             }
 
-            if (statusCode >= 200 && statusCode < 300 && headers) {
+            if (res.statusCode >= 200 && res.statusCode < 300 && headers) {
                 headers.forEach((value: string | number, key: string) => {
                     res.setHeader(key.toLowerCase(), value)
                 })

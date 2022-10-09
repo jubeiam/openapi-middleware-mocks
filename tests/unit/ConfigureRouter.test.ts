@@ -1,38 +1,32 @@
-import { isMethod, correctPath, addRoutes } from '../../src/ConfigureRouter'
-import parser from "@apidevtools/swagger-parser";
-import { OpenAPIV3 } from 'openapi-types';
-import Routes from "routes";
+import { correctPath, addRoutes } from '../../src/ConfigureRouter'
+import parser from '@apidevtools/swagger-parser'
+import { OpenAPIV3 } from 'openapi-types'
+import Routes from 'routes'
 
-const mockAddRoute = jest.fn();
+const mockAddRoute = jest.fn()
 jest.mock('routes', () => {
     return jest.fn().mockImplementation(() => {
-        return { addRoute: mockAddRoute };
-    });
-});
+        return { addRoute: mockAddRoute }
+    })
+})
 
 let router
 let apiConfig
 
 beforeAll(() => {
-    return new Promise(resolve => {
-        parser.dereference('./tests/petstore.yaml', function (err, api: OpenAPIV3.Document) {
-            if (err) throw err;
+    return new Promise((resolve) => {
+        parser.dereference('./tests/petstore.yaml', function (err, api) {
+            if (err) throw err
             apiConfig = api
-            resolve();
-        });
-    });
+            resolve(undefined)
+        })
+    })
 })
 
 beforeEach(() => {
-    mockAddRoute.mockClear();
-    // @ts-ignore
+    mockAddRoute.mockClear()
     router = new Routes()
-});
-
-test('isMethod', () => {
-    expect(isMethod('foo')).toBeFalsy()
-    expect(isMethod('get')).toBeTruthy()
-});
+})
 
 test('correctPath', () => {
     expect(correctPath('foo')).toBe('/foo')
@@ -41,12 +35,12 @@ test('correctPath', () => {
     expect(correctPath('/foo/bar/')).toBe('/foo/bar')
     expect(correctPath('foo/{bar}/')).toBe('/foo/:bar')
     expect(correctPath('foo/{bar}')).toBe('/foo/:bar')
-});
+})
 
 test('addRoutes', () => {
     const route = '/pets'
     const pathItemObject: OpenAPIV3.PathItemObject = apiConfig.paths[route]
 
     addRoutes(pathItemObject, router, route)
-    expect(mockAddRoute.mock.calls[0][0]).toEqual('GET /pets');
+    expect(mockAddRoute.mock.calls[0][0]).toEqual('GET /pets')
 })

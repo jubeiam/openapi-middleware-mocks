@@ -6,7 +6,7 @@ type headers = {
 
 interface LocalRequest {
     method: 'GET' | 'POST' | 'PUT'
-    url: string
+    path: string
     body?: any
     headers?: headers
 }
@@ -18,14 +18,14 @@ interface LocalResponse {
 }
 
 let cachedMain
-let caheKey: string
+let cacheKey: string
 
 async function getMiddleware(mainConfig: Config) {
-    if (caheKey === JSON.stringify(mainConfig)) {
+    if (cacheKey === JSON.stringify(mainConfig)) {
         return cachedMain
     }
 
-    caheKey = JSON.stringify(mainConfig)
+    cacheKey = JSON.stringify(mainConfig)
     return (cachedMain = await main({
         format400() {
             return {
@@ -58,6 +58,13 @@ export async function invoke(
             if (x) {
                 this.response = JSON.parse(x)
             }
+
+            return this
+        },
+        send(x) {
+            this.response = x
+
+            return this
         },
         end() {},
         setHeader(key: string, value: string): void {
@@ -65,14 +72,18 @@ export async function invoke(
                 this.headers = {}
             }
             this.headers[key] = value
+
+            return this
         },
         status(code: number) {
             this.statusCode = code
+
+            return this
         },
     }
 
     const next = () => {
-        console.log('NOT FOUND', request.url)
+        console.log('NOT FOUND', request.path)
     }
 
     await execRoute(request, res, next)
