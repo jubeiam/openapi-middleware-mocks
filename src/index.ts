@@ -1,4 +1,3 @@
-import * as Express from 'express'
 import parser from '@apidevtools/swagger-parser'
 import ConfigureRouter from './ConfigureRouter'
 import PrunePaths from './PrunePaths'
@@ -37,7 +36,7 @@ export default async function (config: Config) {
     /**
      * Middleware
      */
-    return function (req: Express.Request, res: Express.Response, next: Express.NextFunction) {
+    return function (req: any, res: any, next: any) {
         const method = req.method
         const path = req.path
         const route = method.toUpperCase() + ' ' + path

@@ -1,6 +1,5 @@
 'use strict';
 
-var url = require('url');
 var parser$1 = require('@apidevtools/swagger-parser');
 var lodash = require('lodash');
 var Chance = require('chance');
@@ -11,7 +10,6 @@ var util$1 = require('util');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-var url__default = /*#__PURE__*/_interopDefaultLegacy(url);
 var parser__default = /*#__PURE__*/_interopDefaultLegacy(parser$1);
 var Chance__default = /*#__PURE__*/_interopDefaultLegacy(Chance);
 var drange__default = /*#__PURE__*/_interopDefaultLegacy(drange);
@@ -2410,20 +2408,20 @@ function getRequestBodySchema(requestBody) {
 }
 function getResponseSchema(responseCode, responses) {
     var _a, _b;
-    const r = ((responses[responseCode] || responses['default']));
+    const r = (responses[responseCode] || responses['default']);
     return (_b = (_a = r === null || r === void 0 ? void 0 : r.content) === null || _a === void 0 ? void 0 : _a['application/json']) === null || _b === void 0 ? void 0 : _b.schema;
 }
 function validateRequestBody(operation, data) {
     let responseSchema, responseCode, responseBody;
     if (operation.requestBody && 'content' in operation.requestBody) {
-        const requestBodySchema = (getRequestBodySchema(operation.requestBody));
+        const requestBodySchema = getRequestBodySchema(operation.requestBody);
         let validRequestBody = 'schema missing';
         if (requestBodySchema) {
             validRequestBody = validateDataAgainstSchema(data, requestBodySchema);
         }
         if (true !== validRequestBody) {
             responseCode = '400';
-            responseBody = responseSchema = (getResponseSchema(responseCode, operation.responses));
+            responseSchema = (getResponseSchema(responseCode, operation.responses));
             if (responseSchema) {
                 responseBody = parser.parse(responseSchema);
             }
@@ -2447,7 +2445,7 @@ function prepareResponse(operation) {
         if (routeData.body) {
             const resultRequest = validateRequestBody(operation, routeData.body);
             if (resultRequest) {
-                return [resultRequest[0], parseInt(resultRequest[1])];
+                return [resultRequest[0], parseInt(resultRequest[1]), headers];
             }
         }
         for (responseCode in responses) {
@@ -2456,12 +2454,12 @@ function prepareResponse(operation) {
                 if ('content' in responses[responseCode]) {
                     const responseSchema = getResponseSchema(responseCode, responses);
                     responseBody = parser.parse(responseSchema);
-                    console.log(responseBody);
                     responseBody = applyOverride(routeData.overrides, responseBody);
                     if ('headers' in responses[responseCode]) {
-                        const responseHeaders = (responses[responseCode]).headers;
+                        const responseHeaders = responses[responseCode]
+                            .headers;
                         for (const k in responseHeaders) {
-                            headers.set(k, parser.parse(((responseHeaders[k]).schema)));
+                            headers.set(k, parser.parse((responseHeaders[k].schema)));
                         }
                     }
                 }
@@ -2470,41 +2468,35 @@ function prepareResponse(operation) {
         }
         if (responseBody === undefined) {
             responseCode = '500';
-            responseBody = getResponseSchema('default', responses);
-            responseBody = parser.parse(responseBody);
+            responseBody = parser.parse(getResponseSchema('default', responses));
         }
         return [responseBody, parseInt(responseCode), headers];
     };
 }
 
-function isMethod(name) {
-    return ["get", "put", "post", "delete", "options", "head", "patch"].includes(name);
-}
 function correctPath(path) {
-    const uri = path.replace(/^\/?|\/?$/g, "");
-    const segments = uri.split("/");
-    return ("/" +
+    const uri = path.replace(/^\/?|\/?$/g, '');
+    const segments = uri.split('/');
+    return ('/' +
         segments
-            .map(segment => {
-            if (segment.charAt(0) === "{" &&
-                segment.charAt(segment.length - 1) === "}") {
-                return ":" + segment.slice(1, -1);
+            .map((segment) => {
+            if (segment.charAt(0) === '{' && segment.charAt(segment.length - 1) === '}') {
+                return ':' + segment.slice(1, -1);
             }
             return segment;
         })
-            .join("/"));
+            .join('/'));
 }
 function addRoutes(pathItemObject, router, route) {
-    for (let methodName in pathItemObject) {
-        if (!isMethod(methodName))
-            continue;
-        if (process.env.debug) {
-            console.log("ADDING ROUTE: ", methodName.toUpperCase() + ' ' + route);
-        }
-        // @ts-ignore
-        const respond = prepareResponse(pathItemObject[methodName]);
-        router.addRoute(methodName.toUpperCase() + ' ' + route, respond);
-    }
+    pathItemObject.get && router.addRoute(`GET ${route}`, prepareResponse(pathItemObject.get));
+    pathItemObject.put && router.addRoute(`PUT ${route}`, prepareResponse(pathItemObject.put));
+    pathItemObject.post && router.addRoute(`POST ${route}`, prepareResponse(pathItemObject.post));
+    pathItemObject.delete &&
+        router.addRoute(`DELETE ${route}`, prepareResponse(pathItemObject.delete));
+    pathItemObject.options &&
+        router.addRoute(`OPTIONS ${route}`, prepareResponse(pathItemObject.options));
+    pathItemObject.head && router.addRoute(`HEAD ${route}`, prepareResponse(pathItemObject.head));
+    pathItemObject.patch && router.addRoute(`PATCH ${route}`, prepareResponse(pathItemObject.patch));
 }
 function ConfigureRouter(paths) {
     const router = new routes();
@@ -2560,7 +2552,7 @@ function index (config) {
             throw new Error('Cannot specify both ignorePaths and mockPaths in config');
         }
         let router;
-        const api = (yield parser__default['default'].dereference(config.openApiFile || config.openApi));
+        const api = yield parser__default['default'].dereference(config.openApiFile || config.openApi);
         if (config.ignorePaths) {
             api.paths = PrunePaths(api.paths, config.ignorePaths);
         }
@@ -2573,14 +2565,12 @@ function index (config) {
          */
         return function (req, res, next) {
             const method = req.method;
-            const path = url__default['default'].parse(req.url).pathname;
+            const path = req.path;
             const route = method.toUpperCase() + ' ' + path;
             const matchingRoute = router.match(route);
             res.setHeader('Content-Type', 'application/json');
             if (!matchingRoute && config.format404) {
-                res.statusCode = 404;
-                res.write(JSON.stringify(config.format404(next)));
-                return;
+                return res.status(404).send(config.format404());
             }
             else if (!matchingRoute) {
                 return next();
@@ -2590,7 +2580,9 @@ function index (config) {
             }
             let overrides = {};
             try {
-                overrides = JSON.parse(req.headers['x-force-mock']);
+                overrides = JSON.parse(Array.isArray(req.headers['x-force-mock'])
+                    ? req.headers['x-force-mock'][0]
+                    : req.headers['x-force-mock']);
             }
             catch (err) { }
             try {
@@ -2601,14 +2593,12 @@ function index (config) {
                     overrides,
                 });
                 let body = response[0];
-                const statusCode = response[1];
+                res.statusCode = response[1];
                 const headers = response[2];
-                console.log('INDEX', headers);
-                res.statusCode = statusCode;
                 if (config.format400 && 400 === res.statusCode) {
                     body = config.format400();
                 }
-                if (statusCode >= 200 && statusCode < 300 && headers) {
+                if (res.statusCode >= 200 && res.statusCode < 300 && headers) {
                     headers.forEach((value, key) => {
                         res.setHeader(key.toLowerCase(), value);
                     });
@@ -2627,3 +2617,4 @@ function index (config) {
 }
 
 module.exports = index;
+//# sourceMappingURL=bundle.js.map

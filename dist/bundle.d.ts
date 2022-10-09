@@ -5,7 +5,7 @@ interface Config {
     ignorePaths?: string[];
     mockPaths?: string[];
     format400?: () => {};
-    format404?: (next: Function) => {};
+    format404?: () => {};
 }
 declare function indexFunc(config: Config): Promise<(req: any, res: any, next: any) => any>;
 export { Config, indexFunc as default };

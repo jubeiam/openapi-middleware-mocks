@@ -1,63 +1,62 @@
 {
-  "name": "openapi-middleware-mocks",
-  "keywords": [
-    "openapi",
-    "middleware",
-    "openapi3",
-    "openapiv3",
-    "express"
-  ],
-  "version": "2.0.0",
-  "description": "Creates a connect middleware mock API from a Opienapi#3",
-  "main": "dist/bundle.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jubeiam/openapi-middleware-mocks"
-  },
-  "bugs": {
-    "url": "https://github.com/jubeiam/openapi-middleware-mocks/issues"
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "scripts": {
-    "build": "yarn run rollup -c --file ./dist/bundle.js --format cjs",
-    "test": "yarn jest",
-    "version": "yarn run build && git add dist/*"
-  },
-  "author": "jubeiam",
-  "license": "MIT",
-  "dependencies": {
-    "@apidevtools/swagger-parser": "^9.0.1",
-    "@openapi-contrib/openapi-schema-to-json-schema": "^3.0.0",
-    "chance": "^1.1.1",
-    "djv": "^2.1.3-alpha.0",
-    "hoek": "4.2.1",
-    "lodash": "^4.17.21",
-    "randexp": "^0.4.2",
-    "routes": "~2.0.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/preset-env": "^7.9.0",
-    "@babel/preset-typescript": "^7.9.0",
-    "@rollup/plugin-commonjs": "^11.0.2",
-    "@rollup/plugin-json": "^4.0.2",
-    "@types/chance": "^1.0.9",
-    "@types/express": "^4.17.14",
-    "@types/jest": "^25.1.4",
-    "@types/lodash": "^4.14.178",
-    "@types/node": "^13.9.3",
-    "@types/swagger-parser": "^7.0.1",
-    "@wessberg/rollup-plugin-ts": "^1.2.21",
-    "babel-jest": "^25.1.0",
-    "body-parser": "^1.20.1",
-    "express": "^4.18.1",
-    "jest": "^25.1.0",
-    "openapi-types": "^1.3.5",
-    "rollup": "^2.1.0",
-    "supertest": "^6.3.0",
-    "typescript": "^3.8.3"
-  }
+    "name": "openapi-middleware-mocks",
+    "keywords": [
+        "openapi",
+        "middleware",
+        "openapi3",
+        "openapiv3",
+        "express"
+    ],
+    "version": "2.0.0",
+    "description": "Creates a connect middleware mock API from a Opienapi#3",
+    "main": "dist/bundle.js",
+    "types": "dist/bundle.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/jubeiam/openapi-middleware-mocks"
+    },
+    "bugs": {
+        "url": "https://github.com/jubeiam/openapi-middleware-mocks/issues"
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "yarn run rollup -c --file ./dist/bundle.js --format cjs",
+        "test": "yarn jest",
+        "version": "yarn run build && git add dist/*"
+    },
+    "author": "jubeiam",
+    "license": "MIT",
+    "dependencies": {
+        "@apidevtools/swagger-parser": "^9.0.1",
+        "@openapi-contrib/openapi-schema-to-json-schema": "^3.0.0",
+        "chance": "^1.1.1",
+        "djv": "^2.1.3-alpha.0",
+        "hoek": "4.2.1",
+        "lodash": "^4.17.21",
+        "randexp": "^0.4.2",
+        "routes": "~2.0.0"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.9.0",
+        "@babel/preset-env": "^7.9.0",
+        "@babel/preset-typescript": "^7.9.0",
+        "@rollup/plugin-commonjs": "^11.0.2",
+        "@rollup/plugin-json": "^4.0.2",
+        "@types/chance": "^1.0.9",
+        "@types/jest": "^25.1.4",
+        "@types/lodash": "^4.14.178",
+        "@types/node": "^13.9.3",
+        "@types/swagger-parser": "^7.0.1",
+        "@wessberg/rollup-plugin-ts": "^1.2.21",
+        "babel-jest": "^25.1.0",
+        "body-parser": "^1.20.1",
+        "express": "^4.18.1",
+        "jest": "^25.1.0",
+        "openapi-types": "^1.3.5",
+        "rollup": "^2.1.0",
+        "supertest": "^6.3.0",
+        "typescript": "^3.8.3"
+    }
 }
